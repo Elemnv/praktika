@@ -1,0 +1,99 @@
+create database prktk ;
+
+create table otdel (
+                       id serial primary key ,
+                       name varchar(40) not null ,
+                       phones varchar(15) not null
+);
+
+insert into otdel(name, phones)
+VALUES
+('Разработки', '+79178245645'),
+('Аналитики', '+79178241874'),
+('HR', '+79178247485'),
+('Тестирования', '+79178242131');
+
+create table projects (
+                          id serial primary key ,
+                          full_name_project varchar(100) not null ,
+                          department varchar(300) not null,
+                          date_begin_project date not null,
+                          date_delivery_project date not null
+);
+
+insert into projects(full_name_project, department, date_begin_project, date_delivery_project)
+VALUES
+('Мой Перекресток', 'Разработки', '2017/05/07', '2017/07/25'),
+('Мой Перекресток', 'Тестирования', '2017/05/07', '2017/07/25'),
+('Метриум', 'Разработки', '2018/07/03', '2018/08/04'),
+('Онлайн-сервис и мобильное приложение «ЗдравСити»', 'Разработки', '2018/03/30', '2018/05/24'),
+('Онлайн-сервис и мобильное приложение «ЗдравСити»', 'Тестирования', '2018/03/30', '2018/05/24'),
+('Онлайн-сервис и мобильное приложение «ЗдравСити»', 'Аналитики', '2018/03/30', '2018/05/24'),
+('Flacon', 'Аналитики', '2019/05/12', '2019/07/24'),
+('Flacon', 'Разработки', '2019/05/12', '2019/07/24'),
+('Мобильное приложение «Мое дело»', 'Разработки', '2019/09/13', '2019/11/29'),
+('Мобильное приложение «Мое дело»', 'Тестирования', '2019/09/13', '2019/11/29'),
+('Фриланс-биржа Dizcon', 'Разработки', '2020/06/12', '2020/09/24'),
+('Фриланс-биржа Dizcon', 'Тестирования', '2020/06/12', '2020/09/24'),
+('InJapan — интернет-аукцион Yahoo', 'Разработки', '2020/04/04', '2020/06/05'),
+('InJapan — интернет-аукцион Yahoo', 'Аналитики', '2020/04/04', '2020/06/05'),
+('НОВАТ', 'Разработки', '2021/04/04', '2021/06/05'),
+('НОВАТ', 'Тестирования', '2021/04/04', '2021/06/05');
+
+create table woker (
+                        id serial primary key ,
+                        FIO varchar(100) ,
+                        sex varchar(100) ,
+                        phone varchar(130) ,
+                        adress varchar(300),
+                        department varchar(300) not null
+);
+
+insert into woker(FIO, sex, phone, adress, department)
+VALUES
+('Екатерина Каманина', 'женский', '+79214568595', 'г.Ульяновск, ул.Минаева, д.15, кв.95', 'HR'),
+('Егор Шип', 'мужской', '+79214256336', 'г.Ульяновск, ул.Кирова, д.1, кв.9', 'Разработки'),
+('Анастасия Смирнова', 'женский', '+73625622656', 'г.Ульяновск, ул.Железной Девизии, д.5', 'Аналитики' ),
+('Олег Лезин', 'мужской', '+79178651441', 'г.Ульяновск, ул.Гая, д.14, кв.25', 'Разработки'),
+('Даниил Андреев', 'мужской', '+79145637485', 'г.Ульяновск, ул.Гая, д.8, кв.15', 'Разработки'),
+('Егор Шишков', 'мужской', '+79214251542', 'г.Ульяновск, ул.Кирова, д.14, кв.45', 'Разработки'),
+('Елизавета Митрофанова', 'женский', '+79176356456', 'г.Ульяновск, ул.Героев Свири, д.24, кв.14', 'Разработки' ),
+('Александр Ершов', 'мужской', '+79211452594', 'г.Ульяновск, ул.Автомобилистов, д.14, кв.32','Аналитики' ),
+('Артем Асадов', 'мужской', '+79178520203', 'г.Ульяновск, ул.Канонина, д.15, кв.38', 'HR'),
+('Светлана Донилова', 'женский', '+79176398007', 'г.Ульяновск, ул.Кирова, д.12, кв.43', 'Тестирования');
+
+create table projects_woker(
+    woker_id integer references woker(id)
+    on update cascade
+    on delete cascade,
+    projects_id integer references projects(id)
+        on update cascade
+        on delete cascade
+
+);
+
+insert into projects_woker(woker_id, projects_id )
+VALUES
+(1,2),
+(2,1),
+(3,6),
+(4,3),(4,11),
+(5,4),(5,13),
+(6,8),
+(7,9),
+(8,14),(8,7),
+(9,5),
+(10,2),(10,5),(10,10),(10,12),(10,16);
+
+select FIO from woker where id in(
+    select woker_id from projects_woker where projects_id in
+                                              ( select id from projects where woker.department = 'HR')
+);
+
+select full_name_project from projects group by full_name_project;
+
+select full_name_project,date_delivery_project from projects group by date_delivery_project,full_name_project;
+
+select FIO from woker order by FIO;
+
+select distinct full_name_project from projects order by full_name_project;
